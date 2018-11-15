@@ -5,11 +5,17 @@
 [![License](https://img.shields.io/cocoapods/l/MQTT.svg?style=flat)](https://cocoapods.org/pods/MQTT)
 [![Platform](https://img.shields.io/cocoapods/p/MQTT.svg?style=flat)](https://cocoapods.org/pods/MQTT)
 
+## Introduction
+This is a MQTT v5.0 client for Swift based on Apple's Network.framework.
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
+iOS 12.0+ / macOS 10.14+
+Swift 4.2
+Broker with MQTT v5.0 support
 
 ## Installation
 
