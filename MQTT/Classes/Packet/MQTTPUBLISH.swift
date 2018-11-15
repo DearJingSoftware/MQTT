@@ -9,7 +9,7 @@
 import Foundation
 
 /// 3.3 PUBLISH – Publish message
-class MQTTPUBLISH: MQTTProtocol {
+public class MQTTPUBLISH: MQTTProtocol {
     
     /// 3.3.1.1 DUP
     var dup: Bool = false

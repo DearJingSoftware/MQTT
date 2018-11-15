@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MQTTUNSUBACK: MQTTProtocol {
+public class MQTTUNSUBACK: MQTTProtocol {
     
     var packetIdentifier: UInt16
     var reasonString: String?

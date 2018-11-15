@@ -9,7 +9,7 @@
 import Foundation
 
 /// 3.1 CONNECT – Connection Request
-class MQTTCONNECT: MQTTProtocol {
+public class MQTTCONNECT: MQTTProtocol {
     
     private var connectFlags: UInt8 = 0
     

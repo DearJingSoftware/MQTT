@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.7 PUBCOMP – Publish complete (QoS 2 delivery part 3)
-class MQTTPUBCOMP: MQTTProtocol {
+public class MQTTPUBCOMP: MQTTProtocol {
     
     var packetIdentifier: UInt16
     var reasonCode: MQTTPUBCOMPReasonCode

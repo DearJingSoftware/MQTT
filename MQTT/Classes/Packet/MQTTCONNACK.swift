@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MQTTCONNACK: MQTTProtocol {
+public class MQTTCONNACK: MQTTProtocol {
     
     var sessionPresent: Bool?
     var reasonCode: MQTTCONNACKReasonCode

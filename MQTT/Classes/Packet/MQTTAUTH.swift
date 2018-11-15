@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.15 AUTH – Authentication exchange
-class MQTTAUTH: MQTTProtocol {
+public class MQTTAUTH: MQTTProtocol {
     
     var reasonCode: MQTTAUTHReasonCode
     var authenticationMethod: String?

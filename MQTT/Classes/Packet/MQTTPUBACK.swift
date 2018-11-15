@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MQTTPUBACK: MQTTProtocol {
+public class MQTTPUBACK: MQTTProtocol {
     
     var packetIdentifier: UInt16
     var reasonCode: MQTTPUBACKReasonCode

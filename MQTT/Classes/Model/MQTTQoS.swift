@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTQoS: UInt8 {
+public enum MQTTQoS: UInt8 {
     case qos0 = 0
     case qos1 = 1
     case qos2 = 2

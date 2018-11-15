@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.5 PUBREC – Publish received (QoS 2 delivery part 1)
-class MQTTPUBREC: MQTTProtocol {
+public class MQTTPUBREC: MQTTProtocol {
     
     var packetIdentifier: UInt16
     var reasonCode: MQTTPUBRECReasonCode

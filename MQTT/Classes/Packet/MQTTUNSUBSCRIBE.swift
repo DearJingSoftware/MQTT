@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.10 UNSUBSCRIBE – Unsubscribe request
-class MQTTUNSUBSCRIBE: MQTTProtocol {
+public class MQTTUNSUBSCRIBE: MQTTProtocol {
     
     var packetIdentifier: UInt16
     var userProperty: [String: String]?

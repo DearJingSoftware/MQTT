@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.6 PUBREL – Publish release (QoS 2 delivery part 2)
-class MQTTPUBREL: MQTTProtocol {
+public class MQTTPUBREL: MQTTProtocol {
     
     var packetIdentifier: UInt16
     var reasonCode: MQTTPUBRELReasonCode

@@ -31,7 +31,7 @@ enum MQTTStatus {
 }
 
 @available(iOS 12.0, *)
-class MQTT {
+public class MQTT {
     
     var host: String
     var port: UInt16
@@ -68,7 +68,7 @@ class MQTT {
     
     var delegate: MQTTDelegate?
     
-    init(clientID: String, host: String, port: UInt16, username: String?, password: String?) {
+    public init(clientID: String, host: String, port: UInt16, username: String?, password: String?) {
         self.clientID = clientID
         self.host = host
         self.port = port
@@ -86,7 +86,7 @@ class MQTT {
         
     }
     
-    func start() {
+    public func start() {
         connection.stateUpdateHandler = { newState in
             switch newState {
             case .ready:
@@ -112,7 +112,7 @@ class MQTT {
         self.receive()
     }
     
-    func reconnect() {
+    public func reconnect() {
         connection.stateUpdateHandler = { newState in
             switch newState {
             case .ready:
@@ -260,13 +260,13 @@ class MQTT {
         self.pingTimer?.invalidate()
     }
     
-    func subscribe(topic: String, qos: MQTTQoS) {
+    public func subscribe(topic: String, qos: MQTTQoS) {
         let filter = MQTTTopicFilter(topic: topic)
         let packet = MQTTSUBSCRIBE(packetIdentifier: 123, topicFilters: [filter])
         sendPacket(self.connection, packet: packet)
     }
     
-    func publish(topic: String, message: String, qos: MQTTQoS, retain: Bool? = false, dup: Bool? = false) -> UInt16 {
+    public func publish(topic: String, message: String, qos: MQTTQoS, retain: Bool? = false, dup: Bool? = false) -> UInt16 {
         let packet = MQTTPUBLISH(topic: topic)
         packet.applicationMessage = message.data(using: .utf8)
         packet.qos = qos
@@ -277,7 +277,7 @@ class MQTT {
         return packet.packetIdentifier!
     }
     
-    func stop() {
+    public func stop() {
         
     }
     

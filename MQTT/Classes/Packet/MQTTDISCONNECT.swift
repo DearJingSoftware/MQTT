@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.14 DISCONNECT – Disconnect notification
-class MQTTDISCONNECT: MQTTProtocol {
+public class MQTTDISCONNECT: MQTTProtocol {
     
     var reasonCode: MQTTDISCONNECTReasonCode
     var sessionExpiryInterval: UInt32?

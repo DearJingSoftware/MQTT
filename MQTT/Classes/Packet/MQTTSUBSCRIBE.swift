@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.8 SUBSCRIBE - Subscribe request
-class MQTTSUBSCRIBE: MQTTProtocol {
+public class MQTTSUBSCRIBE: MQTTProtocol {
     
     var packetIdentifier: UInt16
     var subscriptionIdentifier: Int?

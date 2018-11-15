@@ -8,7 +8,7 @@
 
 import Foundation
 /// 3.12 PINGREQ – PING request
-class MQTTPINGREQ: MQTTProtocol {
+public class MQTTPINGREQ: MQTTProtocol {
 
     init() {
 
