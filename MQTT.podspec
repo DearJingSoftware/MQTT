@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'MQTT'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of MQTT.'
+  s.summary          = 'MQTT v5.0 client for Swift'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -28,10 +28,10 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/andy1247008998/MQTT.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'MQTT/Classes/**/*'
-  
+  s.swift_version = '4.2'
   # s.resource_bundles = {
   #   'MQTT' => ['MQTT/Assets/*.png']
   # }

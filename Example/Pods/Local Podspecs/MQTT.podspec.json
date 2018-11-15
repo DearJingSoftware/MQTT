@@ -1,0 +1,22 @@
+{
+  "name": "MQTT",
+  "version": "0.1.0",
+  "summary": "A short description of MQTT.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/andy1247008998/MQTT",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "andy1247008998": "1247008998@qq.com"
+  },
+  "source": {
+    "git": "https://github.com/andy1247008998/MQTT.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "MQTT/Classes/**/*"
+}

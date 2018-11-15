@@ -1,0 +1,6 @@
+framework module MQTT {
+  umbrella header "MQTT-umbrella.h"
+
+  export *
+  module * { export * }
+}
