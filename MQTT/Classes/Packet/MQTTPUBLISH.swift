@@ -12,25 +12,25 @@ import Foundation
 public class MQTTPUBLISH: MQTTProtocol {
     
     /// 3.3.1.1 DUP
-    var dup: Bool = false
+    public var dup: Bool = false
     
     /// 3.3.1.2 QoS
-    var qos: MQTTQoS = .qos2
+    public var qos: MQTTQoS = .qos2
     
     /// 3.3.1.3 RETAIN
-    var retain: Bool = false
+    public var retain: Bool = false
     
-    var topic: String
-    var packetIdentifier: UInt16?
-    var payloadFormatIndicator: PayloadFormatIndicator?
-    var messageExpiryInterval: UInt32?
-    var topicAlias: UInt16?
-    var responseTopic: String?
-    var correlationData: Data?
-    var userProperty: [String: String]?
-    var subscriptionIdentifier: Int?
-    var contentType: String?
-    var applicationMessage: Data?
+    public var topic: String
+    public var packetIdentifier: UInt16?
+    public var payloadFormatIndicator: PayloadFormatIndicator?
+    public var messageExpiryInterval: UInt32?
+    public var topicAlias: UInt16?
+    public var responseTopic: String?
+    public var correlationData: Data?
+    public var userProperty: [String: String]?
+    public var subscriptionIdentifier: Int?
+    public var contentType: String?
+    public var applicationMessage: Data?
     
     init(topic: String) {
         self.topic = topic

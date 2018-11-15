@@ -9,7 +9,7 @@
 import Foundation
 import Network
 
-protocol MQTTDelegate {
+public protocol MQTTDelegate {
     func didSendCONNECT()
     func didReceiveCONNACK(packet: MQTTCONNACK, username: String?)
     func didSendPING()
@@ -25,7 +25,7 @@ protocol MQTTDelegate {
     func waitPINGRESPTimedOut()
 }
 
-enum MQTTStatus {
+public enum MQTTStatus {
     case connected
     case disconnected
 }
@@ -33,17 +33,17 @@ enum MQTTStatus {
 @available(iOS 12.0, *)
 public class MQTT {
     
-    var host: String
-    var port: UInt16
-    var clientID: String
-    var username: String?
-    var password: String?
-    var ssl: Bool = true
-    var cleanSession = true
-    var pingInterval = 5.0
+    public var host: String
+    public var port: UInt16
+    public var clientID: String
+    public var username: String?
+    public var password: String?
+    public var ssl: Bool = true
+    public var cleanSession = true
+    public var pingInterval = 5.0
     var pingTimer: Timer?
     var isPINGRESPReceived = true
-    var status: MQTTStatus = .disconnected
+    public var status: MQTTStatus = .disconnected
     var _packetID: UInt16 = 1117
     var packetID: UInt16 {
         get {
@@ -59,14 +59,14 @@ public class MQTT {
     var connection: NWConnection
     var myQueue: DispatchQueue
     var listener: NWListener?
-    var autoReconnect = true
+    public var autoReconnect = true
     
     var type: MQTTType = .Reserved
     var remainingLength: UInt32 = 0
     var isTail = false
     var fixedHeaderData = Data()
     
-    var delegate: MQTTDelegate?
+    public var delegate: MQTTDelegate?
     
     public init(clientID: String, host: String, port: UInt16, username: String?, password: String?) {
         self.clientID = clientID

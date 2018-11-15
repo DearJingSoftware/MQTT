@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum PayloadFormatIndicator: UInt8 {
+public enum PayloadFormatIndicator: UInt8 {
     case unspecified = 0x00
     case utf8 = 0x01
 }
