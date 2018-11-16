@@ -10,32 +10,29 @@ import Foundation
 
 public class MQTTCONNACK: MQTTProtocol {
     
-    var sessionPresent: Bool?
-    var reasonCode: MQTTCONNACKReasonCode
-    var sessionExpiryInterval: UInt32?
-    var receiveMaximum: UInt16?
-    var maximumQoS: MQTTCONNACKMaximumQoS?
-    var retain: Bool?
-    var maximumPacketSize: UInt32?
-    var assignedClientIdentifier: String?
-    var topicAliasMaximum: UInt16?
-    var reasonString: String?
-    var userProperties: [String: String]?
-    var wildcardSubscriptionAvailable: Bool?
-    var subscriptionIdentifiersAvailable: Bool?
-    var sharedSubscriptionAvailable: Bool?
-    var serverKeepAlive: UInt16?
-    var responseInformation: String?
-    var serverReference: String?
-    var authenticationMethod: String?
-    var authenticationData: Data?
+    public var sessionPresent: Bool?
+    public var reasonCode: MQTTCONNACKReasonCode
+    public var sessionExpiryInterval: UInt32?
+    public var receiveMaximum: UInt16?
+    public var maximumQoS: MQTTCONNACKMaximumQoS?
+    public var retain: Bool?
+    public var maximumPacketSize: UInt32?
+    public var assignedClientIdentifier: String?
+    public var topicAliasMaximum: UInt16?
+    public var reasonString: String?
+    public var userProperties: [String: String]?
+    public var wildcardSubscriptionAvailable: Bool?
+    public var subscriptionIdentifiersAvailable: Bool?
+    public var sharedSubscriptionAvailable: Bool?
+    public var serverKeepAlive: UInt16?
+    public var responseInformation: String?
+    public var serverReference: String?
+    public var authenticationMethod: String?
+    public var authenticationData: Data?
     
     init(reasonCode: MQTTCONNACKReasonCode) {
         self.reasonCode = reasonCode
     }
-    
-
-    
     
     var mqttData: Data {
         /// Client never sends CONNACK

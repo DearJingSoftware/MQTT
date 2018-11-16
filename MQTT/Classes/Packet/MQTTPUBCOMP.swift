@@ -10,10 +10,10 @@ import Foundation
 /// 3.7 PUBCOMP – Publish complete (QoS 2 delivery part 3)
 public class MQTTPUBCOMP: MQTTProtocol {
     
-    var packetIdentifier: UInt16
-    var reasonCode: MQTTPUBCOMPReasonCode
-    var reasonString: String?
-    var userProperties: [String: String]?
+    public var packetIdentifier: UInt16
+    public var reasonCode: MQTTPUBCOMPReasonCode
+    public var reasonString: String?
+    public var userProperties: [String: String]?
     
     init(packetIdentifier: UInt16) {
         self.packetIdentifier = packetIdentifier

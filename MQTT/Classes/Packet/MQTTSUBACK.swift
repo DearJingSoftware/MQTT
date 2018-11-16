@@ -10,10 +10,10 @@ import Foundation
 
 public class MQTTSUBACK: MQTTProtocol {
     
-    var packetIdentifier: UInt16
-    var reasonString: String?
-    var userProperties: [String: String]?
-    var reasonCodes: [MQTTSUBACKReasonCode] = []
+    public var packetIdentifier: UInt16
+    public var reasonString: String?
+    public var userProperties: [String: String]?
+    public var reasonCodes: [MQTTSUBACKReasonCode] = []
     
     init(packetIdentifier: UInt16) {
         self.packetIdentifier = packetIdentifier

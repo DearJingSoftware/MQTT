@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTCONNACKMaximumQoS {
+public enum MQTTCONNACKMaximumQoS {
     case qos0
     case qos1
 }

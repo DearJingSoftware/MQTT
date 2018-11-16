@@ -10,10 +10,10 @@ import Foundation
 /// 3.8 SUBSCRIBE - Subscribe request
 public class MQTTSUBSCRIBE: MQTTProtocol {
     
-    var packetIdentifier: UInt16
-    var subscriptionIdentifier: Int?
-    var userProperty: [String: String]?
-    var topicFilters: [MQTTTopicFilter]
+    public var packetIdentifier: UInt16
+    public var subscriptionIdentifier: Int?
+    public var userProperty: [String: String]?
+    public var topicFilters: [MQTTTopicFilter]
     
     init(packetIdentifier: UInt16, topicFilters: [MQTTTopicFilter]) {
         self.packetIdentifier = packetIdentifier

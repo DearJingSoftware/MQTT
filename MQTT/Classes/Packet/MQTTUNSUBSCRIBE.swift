@@ -10,9 +10,9 @@ import Foundation
 /// 3.10 UNSUBSCRIBE – Unsubscribe request
 public class MQTTUNSUBSCRIBE: MQTTProtocol {
     
-    var packetIdentifier: UInt16
-    var userProperty: [String: String]?
-    var topicFilters: [MQTTTopicFilter]
+    public var packetIdentifier: UInt16
+    public var userProperty: [String: String]?
+    public var topicFilters: [MQTTTopicFilter]
     
     init(packetIdentifier: UInt16, topicFilters: [MQTTTopicFilter]) {
         self.packetIdentifier = packetIdentifier

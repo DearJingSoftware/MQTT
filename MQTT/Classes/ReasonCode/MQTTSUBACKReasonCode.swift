@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTSUBACKReasonCode: UInt8 {
+public enum MQTTSUBACKReasonCode: UInt8 {
     case grantedQoS0 = 0x00
     case grantedQoS1 = 0x01
     case grantedQoS2 = 0x02

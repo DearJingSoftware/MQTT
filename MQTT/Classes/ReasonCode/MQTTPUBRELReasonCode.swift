@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTPUBRELReasonCode: UInt8 {
+public enum MQTTPUBRELReasonCode: UInt8 {
     case success = 0x00
     case packetIdentifierNotFound = 0x92
 }

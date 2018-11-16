@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTCONNACKReasonCode: UInt8 {
+public enum MQTTCONNACKReasonCode: UInt8 {
     case success = 0x00
     case unspecifiedError = 0x80
     case malformedPacket = 0x81

@@ -10,11 +10,11 @@ import Foundation
 /// 3.15 AUTH – Authentication exchange
 public class MQTTAUTH: MQTTProtocol {
     
-    var reasonCode: MQTTAUTHReasonCode
-    var authenticationMethod: String?
-    var authenticationData: Data?
-    var reasonString: String?
-    var userProperties: [String: String]?
+    public var reasonCode: MQTTAUTHReasonCode
+    public var authenticationMethod: String?
+    public var authenticationData: Data?
+    public var reasonString: String?
+    public var userProperties: [String: String]?
     
     init(reasonCode: MQTTAUTHReasonCode) {
         self.reasonCode = reasonCode

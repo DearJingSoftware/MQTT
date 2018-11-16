@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTType: UInt8  {
+public enum MQTTType: UInt8  {
     case Reserved = 0
     case CONNECT = 1
     case CONNACK = 2

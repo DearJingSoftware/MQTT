@@ -10,11 +10,11 @@ import Foundation
 /// 3.14 DISCONNECT – Disconnect notification
 public class MQTTDISCONNECT: MQTTProtocol {
     
-    var reasonCode: MQTTDISCONNECTReasonCode
-    var sessionExpiryInterval: UInt32?
-    var reasonString: String?
-    var userProperties: [String: String]?
-    var serverReference: String?
+    public var reasonCode: MQTTDISCONNECTReasonCode
+    public var sessionExpiryInterval: UInt32?
+    public var reasonString: String?
+    public var userProperties: [String: String]?
+    public var serverReference: String?
     
     init(reasonCode: MQTTDISCONNECTReasonCode) {
         self.reasonCode = reasonCode

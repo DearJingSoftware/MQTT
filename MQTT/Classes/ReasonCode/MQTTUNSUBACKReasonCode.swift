@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTUNSUBACKReasonCode: UInt8 {
+public enum MQTTUNSUBACKReasonCode: UInt8 {
     case grantedQoS0 = 0x00
     case noSubscriptionExisted = 0x11
     case unspecifiedError = 0x80

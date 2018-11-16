@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTPUBRECReasonCode: UInt8 {
+public enum MQTTPUBRECReasonCode: UInt8 {
     case success = 0x00
     case noMatchingSubscribers = 0x10
     case unspecifiedError = 0x80

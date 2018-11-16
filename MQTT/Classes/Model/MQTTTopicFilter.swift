@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MQTTTopicFilter {
+public class MQTTTopicFilter {
     var topic: String
     private var options: UInt8 = 0b0000_0000
     var maximumQoS: MQTTQoS

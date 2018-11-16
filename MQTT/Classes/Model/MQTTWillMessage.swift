@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct MQTTWillMessage {
+public struct MQTTWillMessage {
     var willProperties: [MQTTWillProperty]
     var willTopic: String
     var willPayload: Data

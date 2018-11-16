@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTDISCONNECTReasonCode: UInt8 {
+public enum MQTTDISCONNECTReasonCode: UInt8 {
     case normalDisconnection = 0x00
     case disconnectWithWillMessage = 0x4
     case unspecifiedError = 0x80

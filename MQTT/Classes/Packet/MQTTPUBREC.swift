@@ -10,10 +10,10 @@ import Foundation
 /// 3.5 PUBREC – Publish received (QoS 2 delivery part 1)
 public class MQTTPUBREC: MQTTProtocol {
     
-    var packetIdentifier: UInt16
-    var reasonCode: MQTTPUBRECReasonCode
-    var reasonString: String?
-    var userProperties: [String: String]?
+    public var packetIdentifier: UInt16
+    public var reasonCode: MQTTPUBRECReasonCode
+    public var reasonString: String?
+    public var userProperties: [String: String]?
     
     init(packetIdentifier: UInt16) {
         self.packetIdentifier = packetIdentifier

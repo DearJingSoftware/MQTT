@@ -10,10 +10,10 @@ import Foundation
 /// 3.6 PUBREL – Publish release (QoS 2 delivery part 2)
 public class MQTTPUBREL: MQTTProtocol {
     
-    var packetIdentifier: UInt16
-    var reasonCode: MQTTPUBRELReasonCode
-    var reasonString: String?
-    var userProperties: [String: String]?
+    public var packetIdentifier: UInt16
+    public var reasonCode: MQTTPUBRELReasonCode
+    public var reasonString: String?
+    public var userProperties: [String: String]?
     
     init(packetIdentifier: UInt16) {
         self.packetIdentifier = packetIdentifier

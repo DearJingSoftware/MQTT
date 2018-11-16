@@ -8,14 +8,24 @@
 ## Introduction
 This is a MQTT v5.0 client for Swift based on Apple's Network.framework.
 
+MQTT Version 5.0:  http://docs.oasis-open.org/mqtt/mqtt/v5.0/cs02/mqtt-v5.0-cs02.html
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+This project is still under development. DO NOT use it in production!
+
+PRs are warmly welcomed!
+
 ## Requirements
+
 iOS 12.0+ / macOS 10.14+
+
 Swift 4.2
+
 Broker with MQTT v5.0 support
+
 
 ## Installation
 

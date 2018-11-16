@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum MQTTPUBACKReasonCode: UInt8 {
+public enum MQTTPUBACKReasonCode: UInt8 {
     case success = 0x00
     case noMatchingSubscribers = 0x10
     case unspecifiedError = 0x80
