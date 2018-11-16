@@ -10,18 +10,19 @@ import Foundation
 import Network
 
 public protocol MQTTDelegate {
-    func didSendCONNECT()
+    func didSendCONNECT(packet: MQTTCONNECT)
     func didReceiveCONNACK(packet: MQTTCONNACK, username: String?)
     func didSendPING()
     func didReceivePINGRESP()
-    func didReceivePUBACK()
-    func didReceivePUBREC()
-    func didReceivePUBREL()
-    func didReceivePUBCOMP()
+    func didReceivePUBACK(packet: MQTTPUBACK)
+    func didReceivePUBREC(packet: MQTTPUBREC)
+    func didReceivePUBREL(packet: MQTTPUBREL)
+    func didReceivePUBCOMP(packet: MQTTPUBCOMP)
     func didReceivePUBLISH(packet: MQTTPUBLISH)
-    func didReceiveSUBACK()
-    func didReceiveUNSUBACK()
-    func didReceiveDISCONNECT()
+    func didReceiveSUBACK(packet: MQTTSUBACK)
+    func didReceiveUNSUBACK(packet: MQTTUNSUBACK)
+    func didReceiveDISCONNECT(packet: MQTTDISCONNECT)
+    func didReceiveAUTH(packet: MQTTAUTH)
     func waitPINGRESPTimedOut()
 }
 
@@ -185,7 +186,6 @@ public class MQTT {
                                         /// Malformed packet
                                     }
                                 case .PUBLISH:
-                                    print("PUBLISH")
                                     if let packet = decoder.decodePUBLISH(fixedHeaderData: self.fixedHeaderData, remainingData: data) {
                                         self.delegate?.didReceivePUBLISH(packet: packet)
                                         switch packet.qos {
@@ -201,14 +201,64 @@ public class MQTT {
                                     } else {
                                         /// Malformed packet
                                     }
+                                case .PUBACK:
+                                    if let packet = decoder.decodePUBACK(remainingData: data) {
+                                        self.delegate?.didReceivePUBACK(packet: packet)
+                                    } else {
+                                        /// Malformed packet
+                                    }
                                 case .PUBREC:
-                                    print("PUBREC")
+                                    if let packet = decoder.decodePUBREC(remainingData: data) {
+                                        self.delegate?.didReceivePUBREC(packet: packet)
+                                        let pubrel = MQTTPUBREL(packetIdentifier: packet.packetIdentifier, reasonCode: .success)
+                                        self.sendPacket(self.connection, packet: pubrel)
+                                    } else {
+                                        /// Malformed packet
+                                    }
+                                case .PUBREL:
+                                    if let packet = decoder.decodePUBREL(remainingData: data) {
+                                        self.delegate?.didReceivePUBREL(packet: packet)
+                                        let pubcomp = MQTTPUBCOMP(packetIdentifier: packet.packetIdentifier, reasonCode: .success)
+                                        self.sendPacket(self.connection, packet: pubcomp)
+                                    } else {
+                                        /// Malformed packet
+                                    }
+                                case .PUBCOMP:
+                                    if let packet = decoder.decodePUBCOMP(remainingData: data) {
+                                        self.delegate?.didReceivePUBCOMP(packet: packet)
+                                    } else {
+                                        /// Malformed packet
+                                    }
                                 case .SUBACK:
-                                    self.delegate?.didReceiveSUBACK()
+                                    if let packet = decoder.decodeSUBACK(remainingData: data) {
+                                        self.delegate?.didReceiveSUBACK(packet: packet)
+                                    } else {
+                                        /// Malformed packet
+                                    }
+                                case .UNSUBACK:
+                                    if let packet = decoder.decodeUNSUBACK(remainingData: data) {
+                                        self.delegate?.didReceiveUNSUBACK(packet: packet)
+                                    } else {
+                                        /// Malformed packet
+                                    }
+                                case .DISCONNECT:
+                                    if let packet = decoder.decodeDISCONNECT(remainingData: data) {
+                                        self.delegate?.didReceiveDISCONNECT(packet: packet)
+                                        if self.autoReconnect {
+                                            self.reconnect()
+                                        }
+                                    } else {
+                                        /// Malformed packet
+                                    }
+                                case .AUTH:
+                                    if let packet = decoder.decodeAUTH(remainingData: data) {
+                                        self.delegate?.didReceiveAUTH(packet: packet)
+                                    } else {
+                                        /// Malformed packet
+                                    }
                                 default:
                                     break
                                 }
-                                
                             }
                         })
                     }
