@@ -154,14 +154,16 @@ public class MQTT {
         connection.receive(minimumIncompleteLength: 1, maximumLength: 1) { (data, contentContext, isComplete, error) in
             if let data = data {
                 self.fixedHeaderData += data
-                self.remainingLength = self.remainingLength << 7
-                self.remainingLength += UInt32(data.first! & 0b0111_1111)
                 if (data.first! & 0b1000_0000) > 0 {
                     /// Not tail
                     self.receiveRemainingDataRecursively()
                 } else {
                     /// Tail
                     /// Receive remaining data
+                    for i in (1..<self.fixedHeaderData.count).reversed() {
+                        self.remainingLength = self.remainingLength << 7
+                        self.remainingLength += UInt32(self.fixedHeaderData[i] & 0b0111_1111)
+                    }
                     if self.remainingLength == 0 {
                         switch self.type {
                         case .PINGRESP:
@@ -172,6 +174,7 @@ public class MQTT {
                         }
                     } else {
                         self.connection.receive(minimumIncompleteLength: Int(self.remainingLength), maximumLength: Int(self.remainingLength), completion: { (data, contentContext, isComplete, error) in
+                            print("self.remainingLength = \(self.remainingLength)")
                             if let data = data {
                                 var completeData = Data()
                                 completeData += self.fixedHeaderData
