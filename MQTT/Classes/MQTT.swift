@@ -156,7 +156,7 @@ public class MQTT {
                 self.fixedHeaderData += data
                 self.remainingLength = self.remainingLength << 7
                 self.remainingLength += UInt32(data.first! & 0b0111_1111)
-                if (data.first! & 0b1000_0000) == 1 {
+                if (data.first! & 0b1000_0000) > 0 {
                     /// Not tail
                     self.receiveRemainingDataRecursively()
                 } else {
