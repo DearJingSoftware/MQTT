@@ -48,22 +48,12 @@ extension MQTTDecoder {
             }
             switch propertyType {
             case .sessionExpiryInterval:
-                /// UInt32
-                if pointer + 3 > totalCount {
+                /// Four Byte Integer
+                guard let result = decodeFourByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                sessionExpiryInterval = 0
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                sessionExpiryInterval = sessionExpiryInterval! << 8
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                sessionExpiryInterval = sessionExpiryInterval! << 8
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                sessionExpiryInterval = sessionExpiryInterval! << 8
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
+                sessionExpiryInterval = result.value
+                pointer = result.newPointer
             case .reasonString:
                 /// UTF8 Encoded String
                 guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {

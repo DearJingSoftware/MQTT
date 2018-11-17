@@ -30,6 +30,26 @@ class MQTTDecoder {
         return (value, newPointer)
     }
     
+    func decodeFourByteInteger(remainingData: Data, pointer: Int) -> (value: UInt32, newPointer: Int)? {
+        var newPointer = pointer
+        if newPointer + 3 > remainingData.count {
+            return nil
+        }
+        var value: UInt32 = 0
+        value += UInt32(remainingData[pointer])
+        newPointer += 1
+        value = value << 8
+        value += UInt32(remainingData[pointer])
+        newPointer += 1
+        value = value << 8
+        value += UInt32(remainingData[pointer])
+        newPointer += 1
+        value = value << 8
+        value += UInt32(remainingData[pointer])
+        newPointer += 1
+        return (value, newPointer)
+    }
+    
     func decodeVariableByteInteger(remainingData: Data, pointer: Int) -> (value: UInt32, newPointer: Int) {
         var newPointer = pointer
         var count = 0
@@ -70,6 +90,27 @@ class MQTTDecoder {
             return nil
         }
         
+        return (value, newPointer)
+    }
+    
+    func decodeBinaryData(remainingData: Data, pointer: Int) -> (value: Data, newPointer: Int)? {
+        var newPointer = pointer
+        if pointer + 1 > remainingData.count {
+            return nil
+        }
+        /// Binary Data is represented by a Two Byte Integer length which indicates the number of data bytes
+        var length: UInt16 = 0
+        guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
+            return nil
+        }
+        length = result.value
+        newPointer = result.newPointer
+        
+        var value = Data()
+        for _ in 0 ..< length {
+            value.append(remainingData[pointer])
+            newPointer += 1
+        }
         return (value, newPointer)
     }
     

@@ -86,22 +86,12 @@ extension MQTTDecoder {
                 }
                 pointer += 1
             case .messageExpiryInterval:
-                /// UInt32
-                if pointer + 3 > totalCount {
+                /// Four Byte Integer
+                guard let result = decodeFourByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                messageExpiryInterval = 0
-                messageExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                messageExpiryInterval = messageExpiryInterval! << 8
-                messageExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                messageExpiryInterval = messageExpiryInterval! << 8
-                messageExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                messageExpiryInterval = messageExpiryInterval! << 8
-                messageExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
+                messageExpiryInterval = result.value
+                pointer = result.newPointer
             case .topicAlias:
                 /// Two Byte Integer
                 guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
@@ -117,22 +107,12 @@ extension MQTTDecoder {
                 responseTopic = result.value
                 pointer = result.newPointer
             case .correlationData:
-                /// Data
-                /// Binary Data is represented by a Two Byte Integer length which indicates the number of data bytes
-                if pointer + 1 > totalCount {
+                /// Binary Data
+                guard let result = decodeBinaryData(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                
-                for _ in 0 ..< length {
-                    correlationData?.append(remainingData[pointer])
-                    pointer += 1
-                }
+                correlationData = result.value
+                pointer = result.newPointer
             case .userProperty:
                 /// [String: String]
                 /// String1

@@ -55,23 +55,12 @@ extension MQTTDecoder {
                 authenticationMethod = result.value
                 pointer = result.newPointer
             case .authenticationData:
-                /// Data
-                /// Binary Data is represented by a Two Byte Integer length which indicates the number of data bytes
-                if pointer + 1 > totalCount {
+                /// Binary Data
+                guard let result = decodeBinaryData(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                
-                for _ in 0 ..< length {
-                    authenticationData?.append(remainingData[pointer])
-                    pointer += 1
-                }
-                
+                authenticationData = result.value
+                pointer = result.newPointer
             case .reasonString:
                 /// UTF8 Encoded String
                 guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {

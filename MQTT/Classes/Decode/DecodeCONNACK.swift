@@ -67,22 +67,12 @@ extension MQTTDecoder {
             }
             switch propertyType {
             case .sessionExpiryInterval:
-                /// UInt32
-                if pointer + 3 > totalCount {
+                /// Four Byte Integer
+                guard let result = decodeFourByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                sessionExpiryInterval = 0
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                sessionExpiryInterval = sessionExpiryInterval! << 8
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                sessionExpiryInterval = sessionExpiryInterval! << 8
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
-                sessionExpiryInterval = sessionExpiryInterval! << 8
-                sessionExpiryInterval! += UInt32(remainingData[pointer])
-                pointer += 1
+                sessionExpiryInterval = result.value
+                pointer = result.newPointer
             case .receiveMaximum:
                 /// Two Byte Integer
                 guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
@@ -113,22 +103,12 @@ extension MQTTDecoder {
                 }
                 pointer += 1
             case .maximumPacketSize:
-                /// UInt32
-                if pointer + 3 > totalCount {
+                /// Four Byte Integer
+                guard let result = decodeFourByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                maximumPacketSize = 0
-                maximumPacketSize! += UInt32(remainingData[pointer])
-                pointer += 1
-                maximumPacketSize = maximumPacketSize! << 8
-                maximumPacketSize! += UInt32(remainingData[pointer])
-                pointer += 1
-                maximumPacketSize = maximumPacketSize! << 8
-                maximumPacketSize! += UInt32(remainingData[pointer])
-                pointer += 1
-                maximumPacketSize = maximumPacketSize! << 8
-                maximumPacketSize! += UInt32(remainingData[pointer])
-                pointer += 1
+                maximumPacketSize = result.value
+                pointer = result.newPointer
             case .assignedClientIdentifier:
                 /// UTF8 Encoded String
                 guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
@@ -232,23 +212,12 @@ extension MQTTDecoder {
                 authenticationMethod = result.value
                 pointer = result.newPointer
             case .authenticationData:
-                /// Data
-                /// Binary Data is represented by a Two Byte Integer length which indicates the number of data bytes
-                if pointer + 1 > totalCount {
+                /// Binary Data
+                guard let result = decodeBinaryData(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                
-                for _ in 0 ..< length {
-                    authenticationData?.append(remainingData[pointer])
-                    pointer += 1
-                }
-                
+                authenticationData = result.value
+                pointer = result.newPointer
             default:
                 return nil
             }
