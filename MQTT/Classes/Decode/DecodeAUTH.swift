@@ -10,7 +10,6 @@ import Foundation
 
 extension MQTTDecoder {
     func decodeAUTH(remainingData: Data) -> MQTTAUTH? {
-        let totalCount = remainingData.count
         
         var pointer = 0
         var base = pointer

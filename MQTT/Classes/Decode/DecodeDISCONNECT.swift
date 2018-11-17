@@ -10,8 +10,7 @@ import Foundation
 
 extension MQTTDecoder {
     func decodeDISCONNECT(remainingData: Data) -> MQTTDISCONNECT? {
-        let totalCount = remainingData.count
-        
+
         var pointer = 0
         var base = pointer
         
