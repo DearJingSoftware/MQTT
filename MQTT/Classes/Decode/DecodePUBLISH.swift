@@ -72,15 +72,16 @@ extension MQTTDecoder {
         }
         
         /// propertyLength
+        var count = 0
         while pointer < totalCount {
-            propertyLength = propertyLength << 7
-            propertyLength += UInt32(remainingData[pointer] & 0b0111_1111)
-            if (remainingData[pointer] & 0b1000_0000) == 0 {
+            let newValue = UInt32(remainingData[pointer] & 0b0111_1111) << count
+            pointer += 1
+            propertyLength += newValue
+            if (remainingData[pointer] & 0b1000_0000) == 0 || count >= 21 {
                 /// Tail
-                pointer += 1
                 break
             }
-            pointer += 1
+            count += 7
         }
         base = pointer
         
@@ -89,14 +90,16 @@ extension MQTTDecoder {
             /// Although the Property Identifier is defined as a Variable Byte Integer, in this version of the specification all of the Property Identifiers are one byte long.
             /// We implement it as a Variable Byte Integer.
             var type: UInt32 = 0
+            var count = 0
             while pointer < totalCount {
-                type = type << 7
-                type += UInt32(remainingData[pointer] & 0b0111_1111)
+                let newValue = UInt32(remainingData[pointer] & 0b0111_1111) << count
                 pointer += 1
-                if (remainingData[pointer] & 0b1000_0000) == 0 {
+                type += newValue
+                if (remainingData[pointer] & 0b1000_0000) == 0 || count >= 21 {
                     /// Tail
                     break
                 }
+                count += 7
             }
             guard let propertyType = MQTTPropertyType(rawValue: type) else {
                 return nil
@@ -216,14 +219,16 @@ extension MQTTDecoder {
             case .subscriptionIdentifier:
                 /// Variable Byte Integer
                 subscriptionIdentifier = 0
+                var count = 0
                 while pointer < totalCount {
-                    subscriptionIdentifier = subscriptionIdentifier! << 7
-                    subscriptionIdentifier! += Int(remainingData[pointer] & 0b0111_1111)
+                    let newValue = Int(remainingData[pointer] & 0b0111_1111) << count
                     pointer += 1
-                    if (remainingData[pointer] & 0b1000_0000) == 0 {
+                    subscriptionIdentifier! += newValue
+                    if (remainingData[pointer] & 0b1000_0000) == 0 || count >= 21 {
                         /// Tail
                         break
                     }
+                    count += 7
                 }
                 
             case .contentType:
