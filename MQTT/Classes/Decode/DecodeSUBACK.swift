@@ -35,17 +35,9 @@ extension MQTTDecoder {
         pointer += 1
         
         /// propertyLength
-        var count = 0
-        while pointer < totalCount {
-            let newValue = UInt32(remainingData[pointer] & 0b0111_1111) << count
-            pointer += 1
-            propertyLength += newValue
-            if (remainingData[pointer] & 0b1000_0000) == 0 || count >= 21 {
-                /// Tail
-                break
-            }
-            count += 7
-        }
+        let (value, newPointer) = decodeVariableByteInteger(remainingData: remainingData, pointer: pointer)
+        propertyLength = value
+        pointer = newPointer
         base = pointer
         
         /// properties
@@ -53,17 +45,9 @@ extension MQTTDecoder {
             /// Although the Property Identifier is defined as a Variable Byte Integer, in this version of the specification all of the Property Identifiers are one byte long.
             /// We implement it as a Variable Byte Integer.
             var type: UInt32 = 0
-            var count = 0
-            while pointer < totalCount {
-                let newValue = UInt32(remainingData[pointer] & 0b0111_1111) << count
-                pointer += 1
-                type += newValue
-                if (remainingData[pointer] & 0b1000_0000) == 0 || count >= 21 {
-                    /// Tail
-                    break
-                }
-                count += 7
-            }
+            let (value, newPointer) = decodeVariableByteInteger(remainingData: remainingData, pointer: pointer)
+            type = value
+            pointer = newPointer
             guard let propertyType = MQTTPropertyType(rawValue: type) else {
                 return nil
             }
