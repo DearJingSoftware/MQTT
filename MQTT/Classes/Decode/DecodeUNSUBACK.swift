@@ -49,57 +49,29 @@ extension MQTTDecoder {
             }
             switch propertyType {
             case .reasonString:
-                /// String
-                if pointer + 1 > totalCount {
+                /// UTF8 Encoded String
+                guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                /// Length is a Two Byte Integer
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                
-                reasonString = ""
-                for _ in 0 ..< length {
-                    reasonString! += String(remainingData[pointer])
-                    pointer += 1
-                }
+                reasonString = result.value
+                pointer = result.newPointer
             case .userProperty:
                 /// [String: String]
                 /// String1
                 var string1 = ""
-                if pointer + 1 > totalCount {
+                /// UTF8 Encoded String
+                guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                /// Length is a Two Byte Integer
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                for _ in 0 ..< length {
-                    string1 += String(remainingData[pointer])
-                    pointer += 1
-                }
+                string1 = result.value
+                pointer = result.newPointer
                 /// String2
                 var string2 = ""
-                if pointer + 1 > totalCount {
+                guard let result2 = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                /// Length is a Two Byte Integer
-                length = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                for _ in 0 ..< length {
-                    string2 += String(remainingData[pointer])
-                    pointer += 1
-                }
+                string2 = result2.value
+                pointer = result2.newPointer
                 
                 userProperties![string1] = string2
                 

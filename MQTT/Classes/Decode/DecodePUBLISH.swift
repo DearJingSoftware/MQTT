@@ -38,23 +38,12 @@ extension MQTTDecoder {
         var applicationMessage: Data?
         
         /// Topic Name
-        /// String
-        if pointer + 1 > totalCount {
+        /// UTF8 Encoded String
+        guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
             return nil
         }
-        /// Length is a Two Byte Integer
-        var length: UInt16 = 0
-        length += UInt16(remainingData[pointer])
-        pointer += 1
-        length = length << 8
-        length += UInt16(remainingData[pointer])
-        pointer += 1
-        var stringData = Data()
-        for _ in 0 ..< length {
-            stringData.append(remainingData[pointer])
-            pointer += 1
-        }
-        topicName = String(data: stringData, encoding: .utf8) ?? ""
+        topicName = result.value
+        pointer = result.newPointer
         
         /// Packet Identifier
         /// The Packet Identifier field is only present in PUBLISH packets where the QoS level is 1 or 2.
@@ -121,23 +110,12 @@ extension MQTTDecoder {
                 topicAlias = result.value
                 pointer = result.newPointer
             case .responseTopic:
-                /// String
-                if pointer + 1 > totalCount {
+                /// UTF8 Encoded String
+                guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                /// Length is a Two Byte Integer
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                
-                responseTopic = ""
-                for _ in 0 ..< length {
-                    responseTopic! += String(remainingData[pointer])
-                    pointer += 1
-                }
+                responseTopic = result.value
+                pointer = result.newPointer
             case .correlationData:
                 /// Data
                 /// Binary Data is represented by a Two Byte Integer length which indicates the number of data bytes
@@ -159,36 +137,19 @@ extension MQTTDecoder {
                 /// [String: String]
                 /// String1
                 var string1 = ""
-                if pointer + 1 > totalCount {
+                /// UTF8 Encoded String
+                guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                /// Length is a Two Byte Integer
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                for _ in 0 ..< length {
-                    string1 += String(remainingData[pointer])
-                    pointer += 1
-                }
+                string1 = result.value
+                pointer = result.newPointer
                 /// String2
                 var string2 = ""
-                if pointer + 1 > totalCount {
+                guard let result2 = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                /// Length is a Two Byte Integer
-                length = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                for _ in 0 ..< length {
-                    string2 += String(remainingData[pointer])
-                    pointer += 1
-                }
+                string2 = result2.value
+                pointer = result2.newPointer
                 
                 userProperties![string1] = string2
                 
@@ -200,23 +161,12 @@ extension MQTTDecoder {
                 pointer = newPointer
                 
             case .contentType:
-                /// String
-                if pointer + 1 > totalCount {
+                /// UTF8 Encoded String
+                guard let result = decodeUTF8EncodedString(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                /// Length is a Two Byte Integer
-                var length: UInt16 = 0
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                length = length << 8
-                length += UInt16(remainingData[pointer])
-                pointer += 1
-                
-                contentType = ""
-                for _ in 0 ..< length {
-                    contentType! += String(remainingData[pointer])
-                    pointer += 1
-                }
+                contentType = result.value
+                pointer = result.newPointer
                 
             default:
                 return nil

@@ -46,4 +46,31 @@ class MQTTDecoder {
         }
         return (value, newPointer)
     }
+    
+    func decodeUTF8EncodedString(remainingData: Data, pointer: Int) -> (value: String, newPointer: Int)? {
+        var newPointer = pointer
+        
+        if pointer + 1 > remainingData.count {
+            return nil
+        }
+        /// Length is a Two Byte Integer
+        var length: UInt16 = 0
+        guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
+            return nil
+        }
+        length = result.value
+        newPointer = result.newPointer
+        
+        var stringData = Data()
+        for _ in 0 ..< length {
+            stringData.append(remainingData[pointer])
+            newPointer += 1
+        }
+        guard let value = String(data: stringData, encoding: .utf8) else {
+            return nil
+        }
+        
+        return (value, newPointer)
+    }
+    
 }
