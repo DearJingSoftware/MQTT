@@ -12,6 +12,24 @@ class MQTTDecoder {
     
     init() {}
     
+    /// IMPORTANT
+    /// copy-on-write
+    /// avoid writing to remainingData if possible
+    
+    func decodeTwoByteInteger(remainingData: Data, pointer: Int) -> (value: UInt16, newPointer: Int)? {
+        var newPointer = pointer
+        if newPointer + 1 > remainingData.count {
+            return nil
+        }
+        var value: UInt16 = 0
+        value += UInt16(remainingData[pointer])
+        newPointer += 1
+        value = value << 8
+        value += UInt16(remainingData[pointer])
+        newPointer += 1
+        return (value, newPointer)
+    }
+    
     func decodeVariableByteInteger(remainingData: Data, pointer: Int) -> (value: UInt32, newPointer: Int) {
         var newPointer = pointer
         var count = 0

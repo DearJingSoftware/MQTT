@@ -23,16 +23,12 @@ extension MQTTDecoder {
         
         /// Packet Identifier
         /// The Packet Identifier field is only present in PUBLISH packets where the QoS level is 1 or 2.
-        /// UInt16
-        if pointer + 1 > totalCount {
+        /// Two Byte Integer
+        guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
             return nil
         }
-        packetIdentifier = 0
-        packetIdentifier += UInt16(remainingData[pointer])
-        pointer += 1
-        packetIdentifier = packetIdentifier << 8
-        packetIdentifier += UInt16(remainingData[pointer])
-        pointer += 1
+        packetIdentifier = result.value
+        pointer = result.newPointer
         
         /// propertyLength
         let (value, newPointer) = decodeVariableByteInteger(remainingData: remainingData, pointer: pointer)

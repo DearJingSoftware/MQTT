@@ -59,16 +59,12 @@ extension MQTTDecoder {
         /// Packet Identifier
         /// The Packet Identifier field is only present in PUBLISH packets where the QoS level is 1 or 2.
         if qos == .qos1 || qos == .qos2 {
-            /// UInt16
-            if pointer + 1 > totalCount {
+            /// Two Byte Integer
+            guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
                 return nil
             }
-            packetIdentifier = 0
-            packetIdentifier! += UInt16(remainingData[pointer])
-            pointer += 1
-            packetIdentifier = packetIdentifier! << 8
-            packetIdentifier! += UInt16(remainingData[pointer])
-            pointer += 1
+            packetIdentifier = result.value
+            pointer = result.newPointer
         }
         
         /// propertyLength
@@ -118,16 +114,12 @@ extension MQTTDecoder {
                 messageExpiryInterval! += UInt32(remainingData[pointer])
                 pointer += 1
             case .topicAlias:
-                /// UInt16
-                if pointer + 1 > totalCount {
+                /// Two Byte Integer
+                guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                topicAlias = 0
-                topicAlias! += UInt16(remainingData[pointer])
-                pointer += 1
-                topicAlias = topicAlias! << 8
-                topicAlias! += UInt16(remainingData[pointer])
-                pointer += 1
+                topicAlias = result.value
+                pointer = result.newPointer
             case .responseTopic:
                 /// String
                 if pointer + 1 > totalCount {

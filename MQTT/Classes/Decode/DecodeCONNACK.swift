@@ -84,16 +84,12 @@ extension MQTTDecoder {
                 sessionExpiryInterval! += UInt32(remainingData[pointer])
                 pointer += 1
             case .receiveMaximum:
-                /// UInt16
-                if pointer + 1 > totalCount {
+                /// Two Byte Integer
+                guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                receiveMaximum = 0
-                receiveMaximum! += UInt16(remainingData[pointer])
-                pointer += 1
-                receiveMaximum = receiveMaximum! << 8
-                receiveMaximum! += UInt16(remainingData[pointer])
-                pointer += 1
+                receiveMaximum = result.value
+                pointer = result.newPointer
             case .maximumQoS:
                 /// UInt8
                 if pointer > totalCount {
@@ -152,16 +148,12 @@ extension MQTTDecoder {
                     pointer += 1
                 }
             case .topicAliasMaximum:
-                /// UInt16
-                if pointer + 1 > totalCount {
+                /// Two Byte Integer
+                guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                topicAliasMaximum = 0
-                topicAliasMaximum! += UInt16(remainingData[pointer])
-                pointer += 1
-                topicAliasMaximum = topicAliasMaximum! << 8
-                topicAliasMaximum! += UInt16(remainingData[pointer])
-                pointer += 1
+                topicAliasMaximum = result.value
+                pointer = result.newPointer
             case .reasonString:
                 /// String
                 if pointer + 1 > totalCount {
@@ -252,16 +244,12 @@ extension MQTTDecoder {
                 }
                 pointer += 1
             case .serverKeepAlive:
-                /// UInt16
-                if pointer + 1 > totalCount {
+                /// Two Byte Integer
+                guard let result = decodeTwoByteInteger(remainingData: remainingData, pointer: pointer) else {
                     return nil
                 }
-                serverKeepAlive = 0
-                serverKeepAlive! += UInt16(remainingData[pointer])
-                pointer += 1
-                serverKeepAlive = serverKeepAlive! << 8
-                serverKeepAlive! += UInt16(remainingData[pointer])
-                pointer += 1
+                serverKeepAlive = result.value
+                pointer = result.newPointer
             case .responseInformation:
                 /// String
                 if pointer + 1 > totalCount {
