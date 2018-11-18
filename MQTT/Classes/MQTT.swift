@@ -57,7 +57,7 @@ public class MQTT {
         }
     }
     
-    var connection: NWConnection
+    var connection: NWConnection?
     var myQueue: DispatchQueue
     var listener: NWListener?
     public var autoReconnect = true
@@ -77,73 +77,62 @@ public class MQTT {
         self.password = password
         
         myQueue = DispatchQueue(label: "myQueue", qos: .default, attributes: .concurrent, autoreleaseFrequency: .inherit, target: nil)
-        
+
+    }
+    
+    public func start() {
         connection = NWConnection(host: NWEndpoint.Host(self.host), port: NWEndpoint.Port(rawValue: self.port)!, using: .tcp)
         do {
             listener = try NWListener(using: .tcp, on: NWEndpoint.Port(rawValue: port)!)
         } catch {
             print("error")
         }
-        
-    }
-    
-    public func start() {
-        connection.stateUpdateHandler = { newState in
+        connection?.stateUpdateHandler = { newState in
             switch newState {
             case .ready:
-                print("ready")
+                print("NWConnection State: ready")
+                self.sendCONNECT()
             case .waiting(let error):
-                print(error.localizedDescription)
+                print("NWConnection State: waiting")
+                print("NWConnection Error: \(error.debugDescription)")
+                self.restart()
             case .failed(let error):
-                print(error.localizedDescription)
+                print("NWConnection State: failed")
+                print("NWConnection Error: \(error.debugDescription)")
+                self.restart()
             case .cancelled:
-                print("cancelled")
+                print("NWConnection State: cancelled")
             case .preparing:
-                print("preparing")
+                print("NWConnection State: preparing")
             case .setup:
-                print("setup")
+                print("NWConnection State: setup")
             }
         }
-        connection.start(queue: myQueue)
+        connection?.start(queue: myQueue)
+    }
+    
+    func sendCONNECT() {
         let packet = MQTTCONNECT(clientID: self.clientID)
         packet.username = self.username
         packet.password = self.password
-        packet.cleanStart = true
-        self.sendPacket(self.connection, packet: packet)
-        self.receive()
+        packet.cleanStart = cleanSession
+        if self.connection != nil {
+            sendPacket(self.connection!, packet: packet)
+            self.receive()
+        }
     }
     
-    public func reconnect() {
-        connection.stateUpdateHandler = { newState in
-            switch newState {
-            case .ready:
-                print("ready")
-            case .waiting(let error):
-                print(error.localizedDescription)
-            case .failed(let error):
-                print(error.localizedDescription)
-            case .cancelled:
-                print("cancelled")
-            case .preparing:
-                print("preparing")
-            case .setup:
-                print("setup")
-            }
-        }
-        connection.restart()
-        let packet = MQTTCONNECT(clientID: self.clientID)
-        packet.username = self.username
-        packet.password = self.password
-        packet.cleanStart = true
-        self.sendPacket(self.connection, packet: packet)
-        self.receive()
+    func restart() {
+        self.isPINGRESPReceived = true
+        self.pingTimer?.invalidate()
+        self.connection?.restart()
     }
     
     func sendPacket(_ connection: NWConnection, packet: MQTTProtocol) {
         connection.send(content: packet.mqttData, completion: .contentProcessed({ sendError in
             if sendError != nil {
                 // Handle error in sending
-                print("error")
+                print("NWConnection send error: \(sendError.debugDescription)")
             } else {
                 // Send has been processed
             }
@@ -151,7 +140,7 @@ public class MQTT {
     }
     
     func receiveRemainingDataRecursively() {
-        connection.receive(minimumIncompleteLength: 1, maximumLength: 1) { (data, contentContext, isComplete, error) in
+        connection?.receive(minimumIncompleteLength: 1, maximumLength: 1) { (data, contentContext, isComplete, error) in
             if let data = data {
                 self.fixedHeaderData += data
                 if (data.first! & 0b1000_0000) > 0 {
@@ -173,7 +162,7 @@ public class MQTT {
                             break
                         }
                     } else {
-                        self.connection.receive(minimumIncompleteLength: Int(self.remainingLength), maximumLength: Int(self.remainingLength), completion: { (data, contentContext, isComplete, error) in
+                        self.connection?.receive(minimumIncompleteLength: Int(self.remainingLength), maximumLength: Int(self.remainingLength), completion: { (data, contentContext, isComplete, error) in
                             print("self.remainingLength = \(self.remainingLength)")
                             if let data = data {
                                 var completeData = Data()
@@ -196,10 +185,10 @@ public class MQTT {
                                             break
                                         case .qos1:
                                             let puback = MQTTPUBACK(packetIdentifier: packet.packetIdentifier!, reasonCode: .success)
-                                            self.sendPacket(self.connection, packet: puback)
+                                            self.sendPacket(self.connection!, packet: puback)
                                         case .qos2:
                                             let pubrec = MQTTPUBREC(packetIdentifier: packet.packetIdentifier!, reasonCode: .success)
-                                            self.sendPacket(self.connection, packet: pubrec)
+                                            self.sendPacket(self.connection!, packet: pubrec)
                                         }
                                     } else {
                                         /// Malformed packet
@@ -214,7 +203,7 @@ public class MQTT {
                                     if let packet = decoder.decodePUBREC(remainingData: data) {
                                         self.delegate?.didReceivePUBREC(packet: packet)
                                         let pubrel = MQTTPUBREL(packetIdentifier: packet.packetIdentifier, reasonCode: .success)
-                                        self.sendPacket(self.connection, packet: pubrel)
+                                        self.sendPacket(self.connection!, packet: pubrel)
                                     } else {
                                         /// Malformed packet
                                     }
@@ -222,7 +211,7 @@ public class MQTT {
                                     if let packet = decoder.decodePUBREL(remainingData: data) {
                                         self.delegate?.didReceivePUBREL(packet: packet)
                                         let pubcomp = MQTTPUBCOMP(packetIdentifier: packet.packetIdentifier, reasonCode: .success)
-                                        self.sendPacket(self.connection, packet: pubcomp)
+                                        self.sendPacket(self.connection!, packet: pubcomp)
                                     } else {
                                         /// Malformed packet
                                     }
@@ -248,7 +237,8 @@ public class MQTT {
                                     if let packet = decoder.decodeDISCONNECT(remainingData: data) {
                                         self.delegate?.didReceiveDISCONNECT(packet: packet)
                                         if self.autoReconnect {
-                                            self.reconnect()
+                                            self.stop()
+                                            self.start()
                                         }
                                     } else {
                                         /// Malformed packet
@@ -272,7 +262,7 @@ public class MQTT {
     }
     
     func receive() {
-        connection.receive(minimumIncompleteLength: 1, maximumLength: 1) { (data, contentContext, isComplete, error) in
+        connection?.receive(minimumIncompleteLength: 1, maximumLength: 1) { (data, contentContext, isComplete, error) in
             if let data = data {
                 self.remainingLength = 0
                 if let type = MQTTType(rawValue: data.first! >> 4) {
@@ -294,12 +284,15 @@ public class MQTT {
                 if self.isPINGRESPReceived {
                     self.delegate?.didSendPING()
                     let packet = MQTTPINGREQ()
-                    self.sendPacket(self.connection, packet: packet)
+                    if self.connection != nil {
+                        self.sendPacket(self.connection!, packet: packet)
+                    }
                     self.isPINGRESPReceived = false
                 } else {
                     self.delegate?.waitPINGRESPTimedOut()
                     if self.autoReconnect {
-                        self.reconnect()
+                        self.stop()
+                        self.start()
                     }
                 }
             })
@@ -316,7 +309,9 @@ public class MQTT {
     public func subscribe(topic: String, qos: MQTTQoS) {
         let filter = MQTTTopicFilter(topic: topic)
         let packet = MQTTSUBSCRIBE(packetIdentifier: 123, topicFilters: [filter])
-        sendPacket(self.connection, packet: packet)
+        if self.connection != nil {
+            sendPacket(self.connection!, packet: packet)
+        }
     }
     
     public func publish(topic: String, message: String, qos: MQTTQoS, retain: Bool? = false, dup: Bool? = false) -> UInt16 {
@@ -326,12 +321,18 @@ public class MQTT {
         packet.retain = retain!
         packet.dup = dup!
         packet.packetIdentifier = packetID
-        sendPacket(self.connection, packet: packet)
+        if self.connection != nil {
+            sendPacket(self.connection!, packet: packet)
+        }
         return packet.packetIdentifier!
     }
     
     public func stop() {
-        
+        self.pingTimer?.invalidate()
+        self.connection?.forceCancel()
+        self.connection = nil
+        self.listener?.cancel()
+        self.listener = nil
     }
     
 }
