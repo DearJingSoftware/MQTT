@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MQTT'
-  s.version          = '0.2.5'
+  s.version          = '0.2.6'
   s.summary          = 'MQTT v5.0 client for Swift'
 
 # This description is used to generate tags and improve search results.
@@ -29,7 +29,6 @@ TODO: Add long description of the pod here.
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '12.0'
-  s.osx.deployment_target = '10.14'
 
   s.source_files = 'MQTT/Classes/**/*'
   s.swift_version = '4.2'
