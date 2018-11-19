@@ -176,6 +176,7 @@ public class MQTT {
                                         self.sendPING()
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .PUBLISH:
                                     if let packet = decoder.decodePUBLISH(fixedHeaderData: self.fixedHeaderData, remainingData: data) {
@@ -192,12 +193,14 @@ public class MQTT {
                                         }
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .PUBACK:
                                     if let packet = decoder.decodePUBACK(remainingData: data) {
                                         self.delegate?.didReceivePUBACK(packet: packet)
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .PUBREC:
                                     if let packet = decoder.decodePUBREC(remainingData: data) {
@@ -206,6 +209,7 @@ public class MQTT {
                                         self.sendPacket(self.connection!, packet: pubrel)
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .PUBREL:
                                     if let packet = decoder.decodePUBREL(remainingData: data) {
@@ -214,24 +218,28 @@ public class MQTT {
                                         self.sendPacket(self.connection!, packet: pubcomp)
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .PUBCOMP:
                                     if let packet = decoder.decodePUBCOMP(remainingData: data) {
                                         self.delegate?.didReceivePUBCOMP(packet: packet)
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .SUBACK:
                                     if let packet = decoder.decodeSUBACK(remainingData: data) {
                                         self.delegate?.didReceiveSUBACK(packet: packet)
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .UNSUBACK:
                                     if let packet = decoder.decodeUNSUBACK(remainingData: data) {
                                         self.delegate?.didReceiveUNSUBACK(packet: packet)
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .DISCONNECT:
                                     if let packet = decoder.decodeDISCONNECT(remainingData: data) {
@@ -242,15 +250,18 @@ public class MQTT {
                                         }
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 case .AUTH:
                                     if let packet = decoder.decodeAUTH(remainingData: data) {
                                         self.delegate?.didReceiveAUTH(packet: packet)
                                     } else {
                                         /// Malformed packet
+                                        print("Malformed packet")
                                     }
                                 default:
-                                    break
+                                    /// Malformed packet
+                                    print("Malformed packet. Unexpected packet type!")
                                 }
                             }
                         })
