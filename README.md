@@ -41,7 +41,7 @@ pod 'MQTT'
 ```swift
 /// In your AppDelegate or UIViewController
 import MQTT
-mqtt = MQTT(clientID: clientID, host: "mqtt.mustu.cn", port: 1883, username: username, password: password)
+mqtt = MQTT(clientID: clientID, host: "mqtt.example.com", port: 1883, username: username, password: password)
 mqtt.delegate = self
 mqtt.cleanSession = false
 mqtt.start()
