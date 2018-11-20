@@ -36,9 +36,29 @@ it, simply add the following line to your Podfile:
 pod 'MQTT'
 ```
 
-## Author
+## Usage
 
-andy1247008998, 1247008998@qq.com
+```swift
+/// In your AppDelegate or UIViewController
+import MQTT
+mqtt = MQTT(clientID: clientID, host: "mqtt.mustu.cn", port: 1883, username: username, password: password)
+mqtt.delegate = self
+mqtt.cleanSession = false
+mqtt.start()
+
+/// You MUST stop MQTT service when app did enter background, otherwise NWConnection will fail and NSTimer won't stop!
+func applicationDidEnterBackground(_ application: UIApplication) {
+mqtt.stop()
+}
+
+/// MQTT will start a new connection between client and broker.
+func applicationWillEnterForeground(_ application: UIApplication) {
+mqtt.start()
+}
+```
+
+## Author
+andy1247008998
 
 ## License
 
