@@ -17,7 +17,7 @@ extension MQTTDecoder {
         
         var sessionPresent: Bool
         var reasonCode: MQTTCONNACKReasonCode
-        var propertyLength: UInt32 = 0
+        var propertyLength: Int = 0
         var sessionExpiryInterval: UInt32?
         var receiveMaximum: UInt16?
         var maximumQoS: MQTTCONNACKMaximumQoS?
@@ -58,7 +58,7 @@ extension MQTTDecoder {
         while pointer < base + Int(propertyLength) {
             /// Although the Property Identifier is defined as a Variable Byte Integer, in this version of the specification all of the Property Identifiers are one byte long.
             /// We implement it as a Variable Byte Integer.
-            var type: UInt32 = 0
+            var type: Int = 0
             let (value, newPointer) = decodeVariableByteInteger(remainingData: remainingData, pointer: pointer)
             type = value
             pointer = newPointer

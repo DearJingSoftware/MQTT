@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum MQTTPropertyType: UInt32 {
+public enum MQTTPropertyType: Int {
     case payloadFormatIndicator = 0x01
     case messageExpiryInterval = 0x02
     case contentType = 0x03

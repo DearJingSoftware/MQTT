@@ -40,7 +40,8 @@ public class MQTT {
     public var username: String?
     public var password: String?
     public var ssl: Bool = true
-    public var cleanSession = true
+    public var cleanSession = false
+    public var sessionExpiryInterval: UInt32?
     public var pingInterval = 5.0
     var pingTimer: Timer?
     var isPINGRESPReceived = true
@@ -76,7 +77,7 @@ public class MQTT {
         self.username = username
         self.password = password
         
-        myQueue = DispatchQueue(label: "myQueue", qos: .default, attributes: .concurrent, autoreleaseFrequency: .inherit, target: nil)
+        myQueue = DispatchQueue(label: "myQueue")
 
     }
     
@@ -116,6 +117,9 @@ public class MQTT {
         packet.username = self.username
         packet.password = self.password
         packet.cleanStart = cleanSession
+        if let sessionExpiryInterval = self.sessionExpiryInterval {
+            packet.sessionExpiryInterval = sessionExpiryInterval
+        }
         if self.connection != nil {
             sendPacket(self.connection!, packet: packet)
             self.receive()
@@ -164,14 +168,14 @@ public class MQTT {
                     } else {
                         self.connection?.receive(minimumIncompleteLength: Int(self.remainingLength), maximumLength: Int(self.remainingLength), completion: { (data, contentContext, isComplete, error) in
                             print("self.remainingLength = \(self.remainingLength)")
-                            if let data = data {
+                            if let remainingData = data {
                                 var completeData = Data()
                                 completeData += self.fixedHeaderData
-                                completeData += data
+                                completeData += remainingData
                                 let decoder = MQTTDecoder()
                                 switch self.type {
                                 case .CONNACK:
-                                    if let packet = decoder.decodeCONNACK(remainingData: data) {
+                                    if let packet = decoder.decodeCONNACK(remainingData: remainingData) {
                                         self.delegate?.didReceiveCONNACK(packet: packet, username: self.username)
                                         self.sendPING()
                                     } else {
@@ -179,7 +183,7 @@ public class MQTT {
                                         print("Malformed packet")
                                     }
                                 case .PUBLISH:
-                                    if let packet = decoder.decodePUBLISH(fixedHeaderData: self.fixedHeaderData, remainingData: data) {
+                                    if let packet = decoder.decodePUBLISH(fixedHeaderData: self.fixedHeaderData, remainingData: remainingData) {
                                         self.delegate?.didReceivePUBLISH(packet: packet)
                                         switch packet.qos {
                                         case .qos0:
@@ -196,14 +200,14 @@ public class MQTT {
                                         print("Malformed packet")
                                     }
                                 case .PUBACK:
-                                    if let packet = decoder.decodePUBACK(remainingData: data) {
+                                    if let packet = decoder.decodePUBACK(remainingData: remainingData) {
                                         self.delegate?.didReceivePUBACK(packet: packet)
                                     } else {
                                         /// Malformed packet
                                         print("Malformed packet")
                                     }
                                 case .PUBREC:
-                                    if let packet = decoder.decodePUBREC(remainingData: data) {
+                                    if let packet = decoder.decodePUBREC(remainingData: remainingData) {
                                         self.delegate?.didReceivePUBREC(packet: packet)
                                         let pubrel = MQTTPUBREL(packetIdentifier: packet.packetIdentifier, reasonCode: .success)
                                         self.sendPacket(self.connection!, packet: pubrel)
@@ -212,7 +216,7 @@ public class MQTT {
                                         print("Malformed packet")
                                     }
                                 case .PUBREL:
-                                    if let packet = decoder.decodePUBREL(remainingData: data) {
+                                    if let packet = decoder.decodePUBREL(remainingData: remainingData) {
                                         self.delegate?.didReceivePUBREL(packet: packet)
                                         let pubcomp = MQTTPUBCOMP(packetIdentifier: packet.packetIdentifier, reasonCode: .success)
                                         self.sendPacket(self.connection!, packet: pubcomp)
@@ -221,28 +225,28 @@ public class MQTT {
                                         print("Malformed packet")
                                     }
                                 case .PUBCOMP:
-                                    if let packet = decoder.decodePUBCOMP(remainingData: data) {
+                                    if let packet = decoder.decodePUBCOMP(remainingData: remainingData) {
                                         self.delegate?.didReceivePUBCOMP(packet: packet)
                                     } else {
                                         /// Malformed packet
                                         print("Malformed packet")
                                     }
                                 case .SUBACK:
-                                    if let packet = decoder.decodeSUBACK(remainingData: data) {
+                                    if let packet = decoder.decodeSUBACK(remainingData: remainingData) {
                                         self.delegate?.didReceiveSUBACK(packet: packet)
                                     } else {
                                         /// Malformed packet
                                         print("Malformed packet")
                                     }
                                 case .UNSUBACK:
-                                    if let packet = decoder.decodeUNSUBACK(remainingData: data) {
+                                    if let packet = decoder.decodeUNSUBACK(remainingData: remainingData) {
                                         self.delegate?.didReceiveUNSUBACK(packet: packet)
                                     } else {
                                         /// Malformed packet
                                         print("Malformed packet")
                                     }
                                 case .DISCONNECT:
-                                    if let packet = decoder.decodeDISCONNECT(remainingData: data) {
+                                    if let packet = decoder.decodeDISCONNECT(remainingData: remainingData) {
                                         self.delegate?.didReceiveDISCONNECT(packet: packet)
                                         if self.autoReconnect {
                                             self.stop()
@@ -253,7 +257,7 @@ public class MQTT {
                                         print("Malformed packet")
                                     }
                                 case .AUTH:
-                                    if let packet = decoder.decodeAUTH(remainingData: data) {
+                                    if let packet = decoder.decodeAUTH(remainingData: remainingData) {
                                         self.delegate?.didReceiveAUTH(packet: packet)
                                     } else {
                                         /// Malformed packet

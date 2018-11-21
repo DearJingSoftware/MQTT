@@ -24,7 +24,7 @@ extension MQTTDecoder {
         var pointer = 0
         var base = pointer
         
-        var propertyLength: UInt32 = 0
+        var propertyLength: Int = 0
         var topicName = ""
         var packetIdentifier: UInt16?
         var payloadFormatIndicator: PayloadFormatIndicator?
@@ -66,7 +66,7 @@ extension MQTTDecoder {
         while pointer < base + Int(propertyLength) {
             /// Although the Property Identifier is defined as a Variable Byte Integer, in this version of the specification all of the Property Identifiers are one byte long.
             /// We implement it as a Variable Byte Integer.
-            var type: UInt32 = 0
+            var type: Int = 0
             let (value, newPointer) = decodeVariableByteInteger(remainingData: remainingData, pointer: pointer)
             type = value
             pointer = newPointer

@@ -112,7 +112,12 @@ public class MQTTCONNECT: MQTTProtocol {
             return self.connectFlags & 0b0000_0010 > 0
         }
         set {
-            self.connectFlags |= 0b0000_0010
+            switch newValue {
+            case true:
+                self.connectFlags |= 0b0000_0010
+            case false:
+                self.connectFlags &= 0b1111_1101
+            }
         }
     }
     

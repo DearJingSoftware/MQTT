@@ -50,12 +50,12 @@ class MQTTDecoder {
         return (value, newPointer)
     }
     
-    func decodeVariableByteInteger(remainingData: Data, pointer: Int) -> (value: UInt32, newPointer: Int) {
+    func decodeVariableByteInteger(remainingData: Data, pointer: Int) -> (value: Int, newPointer: Int) {
         var newPointer = pointer
         var count = 0
-        var value: UInt32 = 0
+        var value: Int = 0
         while newPointer < remainingData.count {
-            let newValue = UInt32(remainingData[newPointer] & 0b0111_1111) << count
+            let newValue = Int(remainingData[newPointer] & 0b0111_1111) << count
             value += newValue
             if (remainingData[newPointer] & 0b1000_0000) == 0 || count >= 21 {
                 /// Tail
